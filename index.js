@@ -192,39 +192,39 @@ function addRole() {
 
 
 
-    // function addEmployee() {
-    //   inquirer.prompt([ 
-    //     {
-    //       type: 'input',
-    //       name: 'firstName',
-    //       message: 'What is the employees first name?'
-    //   },
+    function addEmployee() {
+      inquirer.prompt([ 
+        {
+          type: 'input',
+          name: 'firstName',
+          message: 'What is the employees first name?'
+      },
 
-    //   {
-    //     type: 'input',
-    //       name: 'lastName',
-    //       message: 'What is the employees last name?'
-    //   },
+      {
+        type: 'input',
+          name: 'lastName',
+          message: 'What is the employees last name?'
+      },
 
-    //   {
-    //     type: 'list'
+      {
+        type: 'list'
 
-    //   }
+      }
     
-    // ]
+    ]
 
-    //   )
-    //   const client = await pool.connect();
-    //   try {
-    //     const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)';
-    //     await client.query(query, values);
-    //     console.log('Employee added successfully');
-    //   } catch (error) {
-    //     console.error('Error adding employee:', error);
-    //   } finally {
-    //     client.release();
-    //   }
-    // }
+      )
+
+      try {
+        const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)';
+       client.query(query, values);
+        console.log('Employee added successfully');
+      } catch (error) {
+        console.error('Error adding employee:', error);
+      } finally {
+        client.release();
+      }
+    }
     
 
 
