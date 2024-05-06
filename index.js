@@ -116,7 +116,7 @@ viewAllRoles = () =>{
     };
 
 
-async function addDepartment() {
+function addDepartment() {
   inquirer.prompt([
     {
       type: 'input',
@@ -124,55 +124,110 @@ async function addDepartment() {
       message: 'What department would you like to add?'
     },
   ])
-.then
+
+.then((results)=>{
+    const params = [results.department];
+    const sql = `INSERT INTO department (name)
+    VALUES ($1)`
+    pool.query(sql, params, (err, results) => {
+      if (err) throw err;
+      console.log('added to db')
+      tracker();
+})
+})
+};
+
+function addRole() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'title',
+      message: 'What is the name of the role would you like to add?'
+    },
+
+    {
+      type: 'input',
+      name: 'salary',
+      message: 'What is the salary for the role?'
+    },
+  ])
+.then((data) => {
+  const params = [data.title, data.salary]
+  const departmentSql = 'SELECT * FROM department'
+  pool.query(departmentSql, (err, info) => {
+    if (err) throw err;
+    const departments = info.rows.map(({id, name}) => ({name:name, value:id}))
+
+  inquirer.prompt ([
+    {
+      type: 'list',
+      name: 'department',
+      message: 'Which department does the role belong to?',
+      choices: departments
+    },
+
+  ]).then((answer) => {
+      console.log(answer)
+      console.log(data)
+    const userData = {
+      ...answer,
+      ...data
+    }
+    console.log(userData)
+
+
+    const params = [userData.title, userData.salary, userData.department];
+    const sql = `INSERT INTO roles (title, salary, department_id)
+    VALUES ($1, $2, $3)`
+  pool.query(sql, params, (err, info) => {
+    console.log('role added')
+  })
+  })
+  
+  })
+
+})
+
 }
 
 
 
+    // function addEmployee() {
+    //   inquirer.prompt([ 
+    //     {
+    //       type: 'input',
+    //       name: 'firstName',
+    //       message: 'What is the employees first name?'
+    //   },
 
+    //   {
+    //     type: 'input',
+    //       name: 'lastName',
+    //       message: 'What is the employees last name?'
+    //   },
 
+    //   {
+    //     type: 'list'
 
-
-
-
-
-    async function addEmployee() {
-      inquirer.prompt([ 
-        {
-          type: 'input',
-          name: 'firstName',
-          message: 'What is the employees first name?'
-      },
-
-      {
-        type: 'input',
-          name: 'lastName',
-          message: 'What is the employees last name?'
-      },
-
-      {
-        type: 'list'
-
-      }
-
+    //   }
     
-    
-    
-    ]
+    // ]
 
-      )
-      const client = await pool.connect();
-      try {
-        const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)';
-        await client.query(query, values);
-        console.log('Employee added successfully');
-      } catch (error) {
-        console.error('Error adding employee:', error);
-      } finally {
-        client.release();
-      }
-    }
+    //   )
+    //   const client = await pool.connect();
+    //   try {
+    //     const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)';
+    //     await client.query(query, values);
+    //     console.log('Employee added successfully');
+    //   } catch (error) {
+    //     console.error('Error adding employee:', error);
+    //   } finally {
+    //     client.release();
+    //   }
+    // }
     
+
+
 
 
 tracker();
