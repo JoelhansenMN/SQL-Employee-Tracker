@@ -272,13 +272,37 @@ function addEmployee() {
     )
 }
 
-function updateEmployeeRole(){
+function updateEmployeeRole() {
+  const employeesSql = 'SELECT id, first_name, last_name FROM employee';
+  pool.query(employeesSql, (err, employeesInfo) => {
+    if (err) throw err;
+    const employees = employeesInfo.rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
 
+    inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employeeId',
+        message: 'Select the employee to update:',
+        choices: employees
+      },
+      {
+        type: 'input',
+        name: 'newRole',
+        message: 'Enter the new role ID for the employee:'
+      }
+    ])
+    .then((answers) => {
+      const params = [answers.newRole, answers.employeeId];
+      const query = 'UPDATE employee SET roles_id = $1 WHERE id = $2';
+
+      pool.query(query, params, (err, res) => {
+        if (err) throw err;
+        console.log('Employee role updated successfully');
+        tracker();
+      });
+    });
+  });
 }
 
  
-
-
-
-
 tracker();
