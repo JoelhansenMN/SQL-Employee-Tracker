@@ -87,7 +87,7 @@ viewAllRoles = () => {
     tracker();
   })
 };
-
+//view all employees
 viewAllEmployees = () => {
   const sql = `SELECT employee.id, 
     employee.first_name, 
@@ -249,8 +249,9 @@ function addEmployee() {
                     ...answer,
                     ...data
                   }
+
                   const params = [userData.firstName, userData.lastName, userData.roles, userData.manager];
-                   const query = 'INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES ($1, $2, $3, $4)';
+                  const query = 'INSERT INTO employee (first_name, last_name, roles_id, manager_id) VALUES ($1, $2, $3, $4)';
 
                   console.log(userData)
                   pool.query(query, params, (err, res) => {
@@ -273,36 +274,47 @@ function addEmployee() {
 }
 
 function updateEmployeeRole() {
-  const employeesSql = 'SELECT id, first_name, last_name FROM employee';
+  const employeesSql = 'SELECT * FROM employee';
   pool.query(employeesSql, (err, employeesInfo) => {
     if (err) throw err;
     const employees = employeesInfo.rows.map(({ id, first_name, last_name }) => ({ name: first_name + " " + last_name, value: id }));
 
-    inquirer.prompt([
-      {
-        type: 'list',
-        name: 'employeeId',
-        message: 'Select the employee to update:',
-        choices: employees
-      },
-      {
-        type: 'input',
-        name: 'newRole',
-        message: 'Enter the new role ID for the employee:'
-      }
-    ])
-    .then((answers) => {
-      const params = [answers.newRole, answers.employeeId];
-      const query = 'UPDATE employee SET roles_id = $1 WHERE id = $2';
+    const rolesSql = 'SELECT * FROM roles';
+    pool.query(rolesSql, (err, rolesInfo) => {
+      if (err) throw err;
+      const roles = rolesInfo.rows.map(({ id, title}) => ({ name: title, value: id }));
 
-      pool.query(query, params, (err, res) => {
-        if (err) throw err;
-        console.log('Employee role updated successfully');
-        tracker();
-      });
+
+      inquirer.prompt([
+        {
+          type: 'list',
+          name: 'employeeId',
+          message: 'Select the employee to update:',
+          choices: employees
+        },
+        {
+          type: 'list',
+          name: 'newRole',
+          message: 'Which role do you want for the selected employee:',
+          choices: roles
+        }
+      ])
+
+        .then((answers) => {
+          const params = [answers.newRole, answers.employeeId];
+          const query = 'UPDATE employee SET roles_id = $1 WHERE id = $2';
+
+          pool.query(query, params, (err, res) => {
+            if (err) throw err;
+            console.log('Employee role updated successfully');
+            tracker();
+          });
+        });
     });
-  });
+  }
+  )
 }
 
- 
+
+
 tracker();
