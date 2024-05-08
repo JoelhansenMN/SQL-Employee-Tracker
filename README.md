@@ -12,6 +12,6 @@
   ## Links:
   [link to repo](https://github.com/JoelhansenMN/SQL-Employee-Tracker)
 
-  [link to video]()
+  [link to video](https://drive.google.com/file/d/1aW-onnC5PXTC49MMsNlQX82v7XRQQGTu/view?usp=sharing)
 
   
